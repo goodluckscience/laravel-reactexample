@@ -1,5 +1,10 @@
 import { Component } from "react";
 import PropertiesService from "../../Services/PropertiesService";
+import { useNavigate } from "react-router-dom";
+
+export const withNavigation = (Component) => {
+    return props => <Component {...props} navigate={useNavigate()} />;
+}
 
 class PropertyjobsCreate extends Component {
 
@@ -13,6 +18,7 @@ class PropertyjobsCreate extends Component {
             jobdescription: '',
             firstname: '',
             lastname: '',
+            errors: {}
         }
 
         //binding
@@ -54,7 +60,8 @@ class PropertyjobsCreate extends Component {
             jobdescription: this.state.jobdescription,
             firstname: this.state.firstname,
             lastname: this.state.lastname,
-        }).then(response => console.log(response.data));
+        }).then(response => this.props.navigate('/'))
+            .catch(error => this.setState({errors: error.response.data.errors}));
     }
 
     renderProperties() {
@@ -86,21 +93,53 @@ class PropertyjobsCreate extends Component {
                     </div>
                     <div className="form-group table">
                         <label htmlFor="jobsummary">Job Summary (max 150 characters)</label>
-                        <input value={this.state.jobsummary} onChange={this.handleJobsummaryChange} type="text" className="form-control" id="jobsummary"
+                        <input value={this.state.jobsummary} onChange={this.handleJobsummaryChange} type="text"
+                               className="form-control" id="jobsummary"
                                placeholder="job summary goes here" maxLength="150" />
+                        <div className="text-red-600 mt-1">
+                            { this.state.errors?.['jobsummary']?.map((message, index) => {
+                                return (
+                                    <div key={index}>{ message }</div>
+                                )
+                            }) }
+                        </div>
                     </div>
                     <div className="form-group table">
                         <label htmlFor="jobdescription">Job Description (max 500 characters)</label>
-                        <textarea value={this.state.jobdescription} onChange={this.handleJobdescriptionChange} className="form-control col-xs-3" id="jobdescription" rows="3"></textarea>
+                        <textarea value={this.state.jobdescription} onChange={this.handleJobdescriptionChange}
+                                  className="form-control col-xs-3" id="jobdescription" rows="3" maxLength="500"></textarea>
+                        <div className="text-red-600 mt-1">
+                            { this.state.errors?.['jobdescription']?.map((message, index) => {
+                                return (
+                                    <div key={index}>{ message }</div>
+                                )
+                            }) }
+                        </div>
                     </div>
                     <div className="form-group row table">
                         <div className="col">
                             <label htmlFor="firstname">First name</label>
-                            <input value={this.state.firstname} onChange={this.handleFirstnameChange} type="text" className="form-control" id="firstname" placeholder="First name" />
+                            <input value={this.state.firstname} onChange={this.handleFirstnameChange} type="text"
+                                   className="form-control" id="firstname" placeholder="First name" maxLength="50" />
+                            <div className="text-red-600 mt-1">
+                                { this.state.errors?.['firstname']?.map((message, index) => {
+                                    return (
+                                        <div key={index}>{ message }</div>
+                                    )
+                                }) }
+                            </div>
                         </div>
                         <div className="col">
                             <label htmlFor="lastname">Last name</label>
-                            <input value={this.state.lastname} onChange={this.handleLastnameChange} type="text" className="form-control" id="lastname" placeholder="Last name" />
+                            <input value={this.state.lastname} onChange={this.handleLastnameChange} type="text"
+                                   className="form-control" id="lastname" placeholder="Last name" maxLength="50" />
+                            <div className="text-red-600 mt-1">
+                                { this.state.errors?.['lastname']?.map((message, index) => {
+                                    return (
+                                        <div key={index}>{ message }</div>
+                                    )
+                                }) }
+                            </div>
                         </div>
                     </div>
                     <button type="submit" className="btn btn-primary">Submit</button>
@@ -110,4 +149,4 @@ class PropertyjobsCreate extends Component {
     }
 }
 
-export default PropertyjobsCreate;
+export default withNavigation(PropertyjobsCreate);

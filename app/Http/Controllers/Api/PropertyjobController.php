@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePropertyjobRequest;
 use App\Http\Resources\PropertyjobResource;
 use App\Models\Propertyjob;
 use App\Models\User;
@@ -22,15 +23,6 @@ class PropertyjobController extends Controller
      */
     public function index()
     {
-//        $data = DB::table('propertyjobs')
-//            ->join('properties', 'propertyjobs.property_id', '=', 'properties.id')
-//            ->join('users', 'propertyjobs.user_id', '=', 'users.id')
-//            ->select('propertyjobs.id', 'propertyjobs.summary', 'propertyjobs.status',
-//                'propertyjobs.created_at', 'users.first_name', 'users.last_name',  'properties.name')
-//            ->orderBy('propertyjobs.id','desc')->paginate(3);
-//
-//        return PropertyjobResource::collection($data);
-
         return PropertyjobResource::collection(Propertyjob::with('property','user')
             ->orderBy('id','desc')->paginate(3));
     }
@@ -41,11 +33,13 @@ class PropertyjobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePropertyjobRequest $request)
     {
+        $req = (object)$request->validated();
+
         $user = new User;
-        $user->first_name = $request->firstname;
-        $user->last_name = $request->lastname;
+        $user->first_name = $req->firstname;
+        $user->last_name = $req->lastname;
         $user->email = Str::random(10) . '@example.com';
         $user->email_verified_at = now();
         $user->remember_token = Str::random(10);
@@ -56,9 +50,9 @@ class PropertyjobController extends Controller
         $user->save();
 
         $propertyjob = Propertyjob::create([
-            'property_id' => $request->property_id,
-            'summary' => $request->jobsummary,
-            'description' => $request->jobdescription,
+            'property_id' => $req->property_id,
+            'summary' => $req->jobsummary,
+            'description' => $req->jobdescription,
             'user_id' => $user->id,
             'created_at' => now(),
             'updated_at' => now(),

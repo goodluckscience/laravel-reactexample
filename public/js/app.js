@@ -2247,11 +2247,13 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "withNavigation": () => (/* binding */ withNavigation)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Services_PropertiesService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Services/PropertiesService */ "./resources/js/Services/PropertiesService.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/index.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
@@ -2275,10 +2277,24 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
 
+
+
+var withNavigation = function withNavigation(Component) {
+  return function (props) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(Component, _objectSpread(_objectSpread({}, props), {}, {
+      navigate: (0,react_router_dom__WEBPACK_IMPORTED_MODULE_3__.useNavigate)()
+    }));
+  };
+};
 
 var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
   _inherits(PropertyjobsCreate, _Component);
@@ -2297,7 +2313,8 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
       jobsummary: '',
       jobdescription: '',
       firstname: '',
-      lastname: ''
+      lastname: '',
+      errors: {}
     }; //binding
 
     _this.handlePropertyChange = _this.handlePropertyChange.bind(_assertThisInitialized(_this));
@@ -2347,6 +2364,8 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
   }, {
     key: "handleSubmit",
     value: function handleSubmit(event) {
+      var _this2 = this;
+
       event.preventDefault();
       axios.post('/api/propertyjobs', {
         property_id: this.state.property_id,
@@ -2355,7 +2374,11 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
         firstname: this.state.firstname,
         lastname: this.state.lastname
       }).then(function (response) {
-        return console.log(response.data);
+        return _this2.props.navigate('/');
+      })["catch"](function (error) {
+        return _this2.setState({
+          errors: error.response.data.errors
+        });
       });
     }
   }, {
@@ -2378,10 +2401,10 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
+      var _this3 = this;
 
       _Services_PropertiesService__WEBPACK_IMPORTED_MODULE_1__["default"].getAll().then(function (response) {
-        return _this2.setState({
+        return _this3.setState({
           properties: response.data
         });
       });
@@ -2389,6 +2412,8 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
   }, {
     key: "render",
     value: function render() {
+      var _this$state$errors, _this$state$errors$jo, _this$state$errors2, _this$state$errors2$j, _this$state$errors3, _this$state$errors3$f, _this$state$errors4, _this$state$errors4$l;
+
       if (!('data' in this.state.properties)) return;
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
         className: "container",
@@ -2416,6 +2441,13 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
               id: "jobsummary",
               placeholder: "job summary goes here",
               maxLength: "150"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+              className: "text-red-600 mt-1",
+              children: (_this$state$errors = this.state.errors) === null || _this$state$errors === void 0 ? void 0 : (_this$state$errors$jo = _this$state$errors['jobsummary']) === null || _this$state$errors$jo === void 0 ? void 0 : _this$state$errors$jo.map(function (message, index) {
+                return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                  children: message
+                }, index);
+              })
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
             className: "form-group table",
@@ -2427,7 +2459,15 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
               onChange: this.handleJobdescriptionChange,
               className: "form-control col-xs-3",
               id: "jobdescription",
-              rows: "3"
+              rows: "3",
+              maxLength: "500"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+              className: "text-red-600 mt-1",
+              children: (_this$state$errors2 = this.state.errors) === null || _this$state$errors2 === void 0 ? void 0 : (_this$state$errors2$j = _this$state$errors2['jobdescription']) === null || _this$state$errors2$j === void 0 ? void 0 : _this$state$errors2$j.map(function (message, index) {
+                return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                  children: message
+                }, index);
+              })
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
             className: "form-group row table",
@@ -2442,7 +2482,15 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
                 type: "text",
                 className: "form-control",
                 id: "firstname",
-                placeholder: "First name"
+                placeholder: "First name",
+                maxLength: "50"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                className: "text-red-600 mt-1",
+                children: (_this$state$errors3 = this.state.errors) === null || _this$state$errors3 === void 0 ? void 0 : (_this$state$errors3$f = _this$state$errors3['firstname']) === null || _this$state$errors3$f === void 0 ? void 0 : _this$state$errors3$f.map(function (message, index) {
+                  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                    children: message
+                  }, index);
+                })
               })]
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
               className: "col",
@@ -2455,7 +2503,15 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
                 type: "text",
                 className: "form-control",
                 id: "lastname",
-                placeholder: "Last name"
+                placeholder: "Last name",
+                maxLength: "50"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                className: "text-red-600 mt-1",
+                children: (_this$state$errors4 = this.state.errors) === null || _this$state$errors4 === void 0 ? void 0 : (_this$state$errors4$l = _this$state$errors4['lastname']) === null || _this$state$errors4$l === void 0 ? void 0 : _this$state$errors4$l.map(function (message, index) {
+                  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+                    children: message
+                  }, index);
+                })
               })]
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
@@ -2471,7 +2527,7 @@ var PropertyjobsCreate = /*#__PURE__*/function (_Component) {
   return PropertyjobsCreate;
 }(react__WEBPACK_IMPORTED_MODULE_0__.Component);
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PropertyjobsCreate);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (withNavigation(PropertyjobsCreate));
 
 /***/ }),
 
